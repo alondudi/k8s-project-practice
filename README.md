@@ -24,29 +24,28 @@ The system is built with high availability and data persistence in mind:
 │   └── values.yaml          # Application configuration
 ├── nginx-ingress/           # NGINX Ingress Controller Helm resources
 └── README.md                # Project documentation
-
+```
 ## Installation & Deployment
 
 ### 1. Setup Infrastructure
 Ensure your Ingress Controller is running:
 ```bash
 helm install ingress-nginx ./nginx-ingress -n ingress-nginx --create-namespace
-
+```
 ### 2. Configure ECR Secret
 Since the images are stored in a private Amazon ECR, create a pull secret:
-
-Bash
+```bash
 kubectl create secret docker-registry regcred \
   --docker-server=${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com \
   --docker-username=AWS \
   --docker-password=$(aws ecr get-login-password) \
   -n wordpress-app
-
+```
 ### 3. Deploy WordPress & MariaDB
 ```bash
 kubectl create ns wordpress-app
 helm install my-wordpress ./wordpress -n wordpress-app
-
+```
 ## Monitoring & Observability
 We use Prometheus for scraping metrics and Grafana for visualization.
 
