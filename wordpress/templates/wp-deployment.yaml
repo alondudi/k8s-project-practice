@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-wordpress
+spec:
+  replicas: {{ .Values.wordpress.replicaCount }}
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+      - name: wordpress
+        image: {{ .Values.wordpress.image }}
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: "db"
+        - name: WORDPRESS_DB_USER
+          value: {{ .Values.db.mysqlUser | quote }}
+        - name: WORDPRESS_DB_PASSWORD
+          value: {{ .Values.db.mysqlPassword | quote }}
+        - name: WORDPRESS_DB_NAME
+          value: {{ .Values.db.mysqlDatabase | quote }}
+        ports:
+        - containerPort: 80

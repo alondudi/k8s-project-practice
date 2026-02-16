@@ -1,0 +1,25 @@
+db:
+  image: "992382545251.dkr.ecr.us-east-1.amazonaws.com/alon-repo:mariadb-10.6.4-focal"
+  port: 3306
+  mysqlRootPassword: "somewordpress"
+  mysqlDatabase: "wordpress"
+  mysqlUser: "wordpress"
+  mysqlPassword: "wordpress"
+  persistence:
+    enabled: true
+    size: 2Gi
+
+wordpress:
+  image: "992382545251.dkr.ecr.us-east-1.amazonaws.com/alon-repo:wordpress-latest"
+  replicaCount: 2
+  service:
+    port: 80
+    type: ClusterIP
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: alon-wp.local
+
+imagePullSecrets:
+  - name: regcred

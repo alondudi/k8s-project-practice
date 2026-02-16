@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-db
+spec:
+  serviceName: "db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: mariadb
+        image: {{ .Values.db.image }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.db.mysqlRootPassword | quote }}
+        - name: MYSQL_DATABASE
+          value: {{ .Values.db.mysqlDatabase | quote }}
+        - name: MYSQL_USER
+          value: {{ .Values.db.mysqlUser | quote }}
+        - name: MYSQL_PASSWORD
+          value: {{ .Values.db.mysqlPassword | quote }}
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: db-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: {{ .Values.db.persistence.size }}
